@@ -1,0 +1,17 @@
+.btn-unpushed {
+    cursor: pointer;
+    width: 100px;
+    border-radius: 50px;
+    background: linear-gradient(145deg, #fff0d6, #e5cab4);
+    box-shadow: 19px 19px 49px #d3baa6,
+        -19px -19px 49px #ffffea;
+}
+
+.btn-pushed {
+    cursor: pointer;
+    width: 100px;
+    border-radius: 50px;
+    background: linear-gradient(145deg, #e5cab4, #fff0d6);
+    box-shadow: 19px 19px 49px #d3baa6,
+        -19px -19px 49px #ffffea;
+}

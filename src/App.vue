@@ -1,12 +1,16 @@
 <template>
+  <img alt="heihachi?" src="@/assets/memoria.jpg" />
   <nav>
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/ToDo">ToDo</router-link> |
   </nav>
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
+body {
+  background: #e8e8e8;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -26,5 +30,11 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+img {
+  object-fit: cover;
+
+  width: 300px;
 }
 </style>
