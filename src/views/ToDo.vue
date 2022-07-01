@@ -22,6 +22,13 @@
         @keypress.enter="addToList()"
         onfocus="this.value = ''"
       />
+      <input
+        type="date"
+        v-model="item.date"
+        @keypress.enter="addToList()"
+        name="date"
+        id=""
+      />
     </div>
 
     <div class="container">
@@ -29,10 +36,24 @@
         class="card scale-up-center fade-in"
         v-for="(item, index) in items"
         :key="index"
-        @dblclick="deleteFromList(index)"
       >
         <h3>{{ item.title }}</h3>
         <p>{{ item.text }}</p>
+        <p>{{ item.date }}</p>
+        <img
+          class="card-btn"
+          @click="addToDone(index)"
+          src="@/assets/tick.png"
+          alt=""
+          srcset=""
+        />
+        <img
+          class="card-btn"
+          @click="deleteFromList(index)"
+          src="@/assets/cross.png"
+          alt=""
+          srcset=""
+        />
       </div>
     </div>
   </div>
@@ -42,10 +63,24 @@
         class="card scale-up-center fade-in"
         v-for="(item, index) in doneItems"
         :key="index"
-        
       >
         <h3>{{ item.title }}</h3>
         <p>{{ item.text }}</p>
+        <p>{{ item.doneDate }}</p>
+        <img
+          class="card-btn"
+          @click="reAddToList(index)"
+          src="@/assets/redo.png"
+          alt=""
+          srcset=""
+        />
+        <img
+          class="card-btn"
+          @click="deleteFromDoneList(index)"
+          src="@/assets/cross.png"
+          alt=""
+          srcset=""
+        />
       </div>
     </div>
   </div>
@@ -57,8 +92,10 @@ export default {
       items: [],
       doneItems: [],
       item: {
-        title: "",
-        text: "",
+        title: null,
+        text: null,
+        date: null,
+        doneDate: null,
       },
       todo: null,
       done: null,
@@ -70,16 +107,27 @@ export default {
         this.items.unshift({
           title: this.item.title,
           text: this.item.text,
+          date: this.item.date,
         });
         this.saveLocalStorage();
       }
-
       this.clearInput();
     },
+    reAddToList(value) {
+      this.items.unshift(this.doneItems[value]);
+      this.deleteFromDoneList(value);
+    },
     deleteFromList(value) {
-      this.doneItems.push(this.items[value]);
       this.items.splice(value, 1);
       this.saveLocalStorage();
+    },
+    deleteFromDoneList(value) {
+      this.doneItems.splice(value, 1);
+      this.saveLocalStorage();
+    },
+    addToDone(value) {
+      this.doneItems.push(this.items[value]);
+      this.deleteFromList(value);
     },
     clearInput() {
       document.getElementById("title").value = "";
@@ -159,5 +207,14 @@ button:active {
 }
 button:focus {
   box-shadow: 4px 4px 12px #797979, -4px -4px 12px #b9b9b9;
+}
+.card-btn {
+  margin: 40px;
+  width: 20px;
+  transition: 0.3s;
+}
+.card-btn:hover {
+  transition: 0.3s;
+  transform: scale(1.2);
 }
 </style>

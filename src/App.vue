@@ -1,8 +1,8 @@
 <template>
   <img alt="heihachi?" src="@/assets/memoria.jpg" />
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/ToDo">ToDo</router-link> |
+    <router-link to="/" class="myButton">Home</router-link>
+    <router-link to="/ToDo" class="myButton">ToDo</router-link>
   </nav>
   <router-view />
 </template>
@@ -29,7 +29,7 @@ nav a {
 }
 
 nav a.router-link-exact-active {
-  color: #42b983;
+  color: #b8e986;
 }
 
 img {
