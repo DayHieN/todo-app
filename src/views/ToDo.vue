@@ -1,19 +1,11 @@
 <template>
   <h1>Cosas que hacer</h1>
   <div class="btn-div">
-    <button @click="toDo()">Por hacer</button>
-    <button @click="doneItem()">Hecho</button>
+    <button class="myButton2" @click="toDo()">Por hacer</button>
+    <button class="myButton2" @click="doneItem()">Hecho</button>
   </div>
   <div class="todo" v-if="todo">
     <div class="inputs">
-      <input
-        id="title"
-        type="text"
-        v-model="item.title"
-        placeholder="título"
-        @keypress.enter="addToList()"
-        onfocus="this.value = ''"
-      />
       <input
         id="text"
         type="text"
@@ -29,26 +21,30 @@
         name="date"
         id=""
       />
+      <button class="myButton2" @click="addToList()">Agregar tarea</button>
     </div>
 
     <div class="container">
       <div
-        class="card scale-up-center fade-in"
+        :class="card"
         v-for="(item, index) in items"
         :key="index"
+        @mouseover="showCardBtn()"
+        @mouseout="hideCardBtn()"
       >
         <h3>{{ item.title }}</h3>
         <p>{{ item.text }}</p>
-        <p>{{ item.date }}</p>
+        <p v-if="item.date">Fecha límite: {{ item.date }}</p>
         <img
-          class="card-btn"
+          :class="cardBtns"
           @click="addToDone(index)"
           src="@/assets/tick.png"
           alt=""
           srcset=""
         />
+
         <img
-          class="card-btn"
+          :class="cardBtns"
           @click="deleteFromList(index)"
           src="@/assets/cross.png"
           alt=""
@@ -60,22 +56,24 @@
   <div class="done" v-if="done">
     <div class="container">
       <div
-        class="card scale-up-center fade-in"
+        :class="card"
         v-for="(item, index) in doneItems"
         :key="index"
+        @mouseover="showCardBtn()"
+        @mouseout="hideCardBtn()"
       >
         <h3>{{ item.title }}</h3>
         <p>{{ item.text }}</p>
-        <p>{{ item.doneDate }}</p>
+        <p v-if="item.doneDate">Fecha de realización: {{ item.doneDate }}</p>
         <img
-          class="card-btn"
+          :class="cardBtns"
           @click="reAddToList(index)"
           src="@/assets/redo.png"
           alt=""
           srcset=""
         />
         <img
-          class="card-btn"
+          :class="cardBtns"
           @click="deleteFromDoneList(index)"
           src="@/assets/cross.png"
           alt=""
@@ -92,47 +90,48 @@ export default {
       items: [],
       doneItems: [],
       item: {
-        title: null,
         text: null,
         date: null,
         doneDate: null,
       },
       todo: null,
       done: null,
+      cardBtns: "card-btn",
+      card: "card scale-up-center fade-in",
     };
   },
+
   methods: {
     addToList() {
       if (this.item.text) {
         this.items.unshift({
-          title: this.item.title,
           text: this.item.text,
           date: this.item.date,
         });
         this.saveLocalStorage();
       }
-      this.clearInput();
     },
     reAddToList(value) {
       this.items.unshift(this.doneItems[value]);
       this.deleteFromDoneList(value);
     },
     deleteFromList(value) {
+      this.hideCard();
       this.items.splice(value, 1);
       this.saveLocalStorage();
     },
     deleteFromDoneList(value) {
+      this.hideCard();
       this.doneItems.splice(value, 1);
       this.saveLocalStorage();
     },
     addToDone(value) {
+      this.hideCard();
+      this.items[value].doneDate = new Date().toLocaleDateString();
       this.doneItems.push(this.items[value]);
       this.deleteFromList(value);
     },
-    clearInput() {
-      document.getElementById("title").value = "";
-      document.getElementById("text").value = "";
-    },
+
     saveLocalStorage() {
       localStorage.setItem("toDoList", JSON.stringify(this.items));
       localStorage.setItem("doneList", JSON.stringify(this.doneItems));
@@ -142,7 +141,15 @@ export default {
         this.items = JSON.parse(localStorage.getItem("toDoList"));
       if (localStorage.getItem("doneList"))
         this.doneItems = JSON.parse(localStorage.getItem("doneList"));
-      console.log(this.items);
+    },
+    showCardBtn() {
+      this.cardBtns = "card-btn-visible fade-in";
+    },
+    hideCardBtn() {
+      this.cardBtns = "card-btn fade-out";
+    },
+    hideCard() {
+      this.card = "card blur-out fade-out";
     },
     toDo() {
       this.todo = true;
@@ -159,14 +166,18 @@ export default {
 };
 </script>
 <style scoped>
+h1 {
+  color: white;
+}
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   gap: 1em;
+  /* display: flex;
+  justify-content: center; */
   transition: 0.3s;
 }
 .card {
-  cursor: pointer;
   transition: 0.3s;
   border-radius: 20px;
   padding: 30px;
@@ -185,35 +196,22 @@ export default {
   justify-content: center;
   margin: 10px;
 }
-button {
-  cursor: pointer;
-  color: #090909;
-  padding: 0.7em 1.7em;
-  font-size: 18px;
-  border-radius: 0.5em;
-  background: #e8e8e8;
-  border: 1px solid #e8e8e8;
-  transition: all 0.3s;
-  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
-  margin: 20px;
-}
 
-button:hover {
-  border: 1px solid white;
-}
-
-button:active {
-  box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
-}
-button:focus {
-  box-shadow: 4px 4px 12px #797979, -4px -4px 12px #b9b9b9;
-}
 .card-btn {
-  margin: 40px;
-  width: 20px;
+  visibility: hidden;
+  cursor: pointer;
+  margin: 5px;
+  width: 25px;
   transition: 0.3s;
 }
-.card-btn:hover {
+.card-btn-visible {
+  visibility: visible;
+  cursor: pointer;
+  margin: 5px;
+  width: 25px;
+  transition: 0.3s;
+}
+.card-btn-visible:hover {
   transition: 0.3s;
   transform: scale(1.2);
 }

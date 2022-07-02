@@ -1,5 +1,4 @@
 <template>
-  <img alt="heihachi?" src="@/assets/memoria.jpg" />
   <nav>
     <router-link to="/" class="myButton">Home</router-link>
     <router-link to="/ToDo" class="myButton">ToDo</router-link>
@@ -9,7 +8,8 @@
 
 <style>
 body {
-  background: #e8e8e8;
+  background: url("@/assets/bg.svg");
+ 
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -21,6 +21,7 @@ body {
 
 nav {
   padding: 30px;
+  background-color: white;
 }
 
 nav a {
