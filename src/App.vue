@@ -1,15 +1,25 @@
 <template>
   <nav>
+    <!-- <img src="@/assets/blob.svg" alt="" srcset=""> -->
     <router-link to="/" class="myButton">Home</router-link>
     <router-link to="/ToDo" class="myButton">ToDo</router-link>
   </nav>
   <router-view />
+  <!-- <Footer/> -->
 </template>
-
+<script>
+import Footer from "@/shared/Footer.vue";
+export default {
+  components: {
+    Footer,
+  },
+};
+</script>
 <style>
 body {
-  background: url("@/assets/bg.svg");
- 
+  background: rgb(124, 124, 234);
+  display: flex;
+  justify-content: center;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -21,7 +31,7 @@ body {
 
 nav {
   padding: 30px;
-  background-color: white;
+  
 }
 
 nav a {
