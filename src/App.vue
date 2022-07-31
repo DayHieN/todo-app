@@ -1,4 +1,5 @@
 <template>
+  <input type="color" v-model="color" />
   <nav>
     <!-- <img src="@/assets/blob.svg" alt="" srcset=""> -->
     <router-link to="/" class="myButton">Home</router-link>
@@ -10,8 +11,25 @@
 <script>
 import Footer from "@/shared/Footer.vue";
 export default {
+  data() {
+    return {
+      color: null,
+    };
+  },
+  watch: {
+    color(newValue) {
+      if (newValue) {
+        this.colorChange();
+      }
+    },
+  },
   components: {
     Footer,
+  },
+  methods: {
+    colorChange() {
+      document.querySelector("body").style.background = this.color;
+    },
   },
 };
 </script>
@@ -31,7 +49,6 @@ body {
 
 nav {
   padding: 30px;
-  
 }
 
 nav a {

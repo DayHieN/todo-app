@@ -1,7 +1,9 @@
 <template>
-  <div class="todo">
+  <button class="myButton2" @click="addToLists(0)">Nueva lista</button>
+
+  <div class="todo scaleUpCenter" id="drag">
     <!-- <button class="myButton2" @click="newList()">Nueva lista</button> -->
-    <div v-if="todoList" class="inputs">
+    <div class="inputs">
       <input
         id="text"
         type="text"
@@ -13,14 +15,22 @@
       <!-- <button class="myButton2" @click="addToList()">Agregar tarea</button> -->
     </div>
     <div class="container">
-      <ul class="fadeIn">
+      <!-- <div>
+        <input type="color" name="" id="" v-model="theme.noteColor" />
+        <input type="color" name="" id="" v-model="theme.fontColor" />
+      </div> -->
+
+      <ul class="fadeIn" id="ul">
         <li
+          id="li"
           v-for="(item, index) in items"
           :key="index"
           @mouseover="showCardBtn()"
+          @mouseout="hideCardBtn()"
           class="fadeIn"
+          draggable="true"
         >
-          <p :class="{ done: item.done }" @click="markAsDone(index)">
+          <p :class="{ done: item.done }" id="p" @click="markAsDone(index)">
             {{ item.text }}
           </p>
           <img
@@ -39,30 +49,36 @@
 export default {
   data() {
     return {
-      todoList: [],
+      lists: [],
       items: [],
-      doneItems: [],
       item: {
         text: null,
-        date: null,
-        doneDate: null,
         done: false,
       },
-      todo: null,
-      done: null,
       cardBtns: "card-btn",
       card: "card scale-up-center fade-in",
+      theme: {
+        fontSize: "15pt",
+        fontColor: "#2c3e50",
+        noteColor: "#FFFFFF",
+      },
     };
   },
-
+  watch: {
+    theme(newValue) {
+      if (newValue) {
+        // this.changeTheme();
+      }
+    },
+  },
   methods: {
-    newList() {},
     markAsDone(value) {
       if (!this.items[value].done) {
         this.items[value].done = true;
       } else {
         this.items[value].done = false;
       }
+      this.saveLocalStorage();
     },
     addToList() {
       if (this.item.text) {
@@ -75,37 +91,29 @@ export default {
         this.saveLocalStorage();
       }
     },
-    reAddToList(value, item) {
-      this.items.unshift(this.doneItems[value]);
-      item.class = "";
-      this.deleteFromDoneList(value);
+    addToLists() {
+      console.log(this.items);
+      this.lists.push(this.items);
+      console.log(this.lists);
     },
-    deleteFromList(value, item) {
+    deleteFromList(value) {
       this.hideCard();
       this.items.splice(value, 1);
       this.saveLocalStorage();
-    },
-    deleteFromDoneList(value, item) {
-      this.hideCard();
-      this.doneItems.splice(value, 1);
-      this.saveLocalStorage();
-    },
-    addToDone(value, item) {
-      this.hideCard();
-      this.items[value].doneDate = new Date().toLocaleDateString();
-      this.doneItems.push(this.items[value]);
-      this.deleteFromList(value);
     },
 
     saveLocalStorage() {
       localStorage.setItem("toDoList", JSON.stringify(this.items));
       localStorage.setItem("doneList", JSON.stringify(this.doneItems));
+      localStorage.setItem("theme", JSON.stringify(this.theme));
     },
     loadLocalStorage() {
       if (localStorage.getItem("toDoList"))
         this.items = JSON.parse(localStorage.getItem("toDoList"));
       if (localStorage.getItem("doneList"))
         this.doneItems = JSON.parse(localStorage.getItem("doneList"));
+      if (localStorage.getItem("theme"))
+        this.theme = JSON.parse(localStorage.getItem("theme"));
     },
     showCardBtn() {
       this.cardBtns = "card-btn-visible fade-in";
@@ -116,23 +124,51 @@ export default {
     hideCard() {
       this.card = "card blur-out fade-out";
     },
+    onDrag({ movementX, movementY }) {
+      const draggableDiv = document.getElementById("drag");
+      let getStyle = window.getComputedStyle(draggableDiv);
+      let left = parseInt(getStyle.left);
+      let top = parseInt(getStyle.top);
+
+      draggableDiv.style.left = `${left + movementX}px`;
+      draggableDiv.style.top = `${top + movementY}px`;
+    },
+    changeTheme() {
+      document.querySelector("p").style.color = this.theme.fontColor;
+      document.querySelector("p").style.fontSize = this.theme.fontSize;
+      document.querySelector("ul").style.background = this.theme.noteColor;
+    },
   },
   mounted() {
     this.loadLocalStorage();
+
+    let draggableDiv = document.getElementById("drag");
+    draggableDiv.addEventListener("mousedown", () => {
+      draggableDiv.addEventListener("mousemove", this.onDrag);
+    });
+    document.addEventListener("mouseup", () => {
+      draggableDiv.removeEventListener("mousemove", this.onDrag);
+    });
   },
 };
 </script>
 <style scoped>
 .todo {
+  cursor: pointer;
   background: url("@/assets/bg.svg");
   border-radius: 10px;
-  max-width: 700px;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
+
 h1 {
   color: white;
 }
 ul {
-  background: white;
+  background: #ffffff;
   max-width: 900px;
   border-radius: 15px;
 }
@@ -181,6 +217,8 @@ li p {
   margin: 5px;
   width: 15px;
   transition: 0.3s;
+  position: relative;
+  top: 6px;
 }
 .card-btn-visible {
   visibility: visible;
