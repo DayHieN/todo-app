@@ -7,7 +7,7 @@ Lista de tareas.
 
 ~~-Cambiar color de fondo~~
 
-~~-Guardar en localStorage~~
+-Guardar en localStorage
 
 -Cambiar color de fondo de la lista
 
